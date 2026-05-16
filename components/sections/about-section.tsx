@@ -18,7 +18,7 @@ export default function AboutSection({
         <SectionHeading
           eyebrow="About"
           title={`Meet ${portfolio.profile.name}`}
-          description={portfolio.profile.about}
+          description={`${portfolio.profile.tagline} ${portfolio.profile.bio}`}
         />
         <section className="grid gap-6 md:grid-cols-2">
           <article className="portfolio-card rounded-[1.75rem] p-6 sm:p-8">
@@ -47,16 +47,20 @@ export default function AboutSection({
           <article className="portfolio-card rounded-[1.75rem] p-6 sm:p-8">
             <h2 className="text-xl font-semibold text-slate-950">Education</h2>
             <div className="mt-4 space-y-6">
-              {portfolio.education.map((item) => (
-                <div key={item.degree} className="space-y-2">
-                  <h3 className="font-semibold text-slate-950">{item.degree}</h3>
-                  <p className="text-sm text-slate-600">{item.school}</p>
-                  <p className="text-sm text-slate-600">
-                    {item.specialization}
-                  </p>
-                  <p className="text-sm text-slate-500">{item.period}</p>
-                </div>
-              ))}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-slate-950">
+                  {portfolio.education.degree}
+                </h3>
+                <p className="text-sm text-slate-600">
+                  {portfolio.education.school}
+                </p>
+                <p className="text-sm text-slate-600">
+                  {portfolio.education.specialization}
+                </p>
+                <p className="text-sm text-slate-500">
+                  {portfolio.education.period}
+                </p>
+              </div>
             </div>
           </article>
         </section>

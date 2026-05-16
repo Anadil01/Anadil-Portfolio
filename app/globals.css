@@ -9,6 +9,8 @@
   --border: rgba(98, 126, 193, 0.28);
   --accent: #38bdf8;
   --accent-strong: #00f0ff;
+  --font-body: "Inter", "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
 @theme inline {
