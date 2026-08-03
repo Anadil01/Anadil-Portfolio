@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0b1020;
-  --foreground: #e5eefb;
-  --muted: #93a4c3;
-  --surface: rgba(12, 18, 34, 0.84);
-  --surface-strong: rgba(16, 24, 44, 0.96);
-  --border: rgba(98, 126, 193, 0.28);
-  --accent: #38bdf8;
-  --accent-strong: #00f0ff;
-  --font-body: "Inter", "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-heading: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --background: #f4f0e8;
+  --foreground: #20252b;
+  --muted: #697078;
+  --surface: #fffdf8;
+  --surface-strong: #fdf9f2;
+  --border: #d9d1c4;
+  --accent: #9f302c;
+  --accent-strong: #75221f;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: Georgia, "Times New Roman", serif;
 }
 
 @theme inline {
@@ -34,12 +34,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--background);
-  background-image:
-    linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px),
-    radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.15) 1px, transparent 0);
-  background-size: 48px 48px, 48px 48px, 24px 24px;
-  background-position: 0 0, 0 0, -12px -12px;
+  background-image: radial-gradient(rgba(32, 37, 43, 0.06) 0.6px, transparent 0.6px);
+  background-size: 8px 8px;
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
   text-rendering: optimizeLegibility;
@@ -56,24 +52,18 @@ a {
 
 .section-card {
   border: 1px solid var(--border);
-  background: linear-gradient(
-    180deg,
-    rgba(14, 22, 40, 0.96) 0%,
-    rgba(10, 16, 30, 0.92) 100%
-  );
-  box-shadow:
-    0 0 0 1px rgba(56, 189, 248, 0.03),
-    0 16px 36px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: none;
 }
 
 .section-shell {
-  border-top: 1px solid rgba(98, 126, 193, 0.18);
+  border-top: 1px solid var(--border);
 }
 
 .tag {
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  background: rgba(56, 189, 248, 0.08);
-  color: #bce8ff;
+  border: 1px solid #ded4c7;
+  background: #f8f3eb;
+  color: #4d5359;
 }
 
 .code-grid {
@@ -86,10 +76,40 @@ a {
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(transparent 31px, rgba(56, 189, 248, 0.05) 32px),
-    linear-gradient(90deg, transparent 31px, rgba(56, 189, 248, 0.05) 32px);
+    linear-gradient(transparent 31px, rgba(32, 37, 43, 0.045) 32px),
+    linear-gradient(90deg, transparent 31px, rgba(32, 37, 43, 0.045) 32px);
   background-size: 32px 32px;
   pointer-events: none;
+}
+
+/* The content components share the former dark palette utilities. These
+   editorial overrides keep their hierarchy while giving the whole site a
+   coherent paper-and-ink treatment. */
+body .text-white { color: #20252b; }
+body .text-slate-100,
+body .text-slate-200 { color: #30363d; }
+body .text-slate-300 { color: #4c545d; }
+body .text-slate-400 { color: #697078; }
+body .text-slate-500 { color: #7d7469; }
+body .text-accent { color: var(--accent); }
+body .text-accent-strong { color: var(--accent-strong); }
+body .border-border { border-color: var(--border); }
+body .bg-surface { background-color: var(--surface); }
+body .bg-white\/\[0\.03\] { background-color: rgba(255, 253, 248, 0.7); }
+body .bg-white\/\[0\.05\] { background-color: rgba(70, 58, 42, 0.05); }
+body .bg-accent { background-color: var(--accent); }
+body .bg-accent\/10 { background-color: rgba(159, 48, 44, 0.08); }
+body .bg-accent\/\[0\.06\] { background-color: rgba(159, 48, 44, 0.05); }
+body .border-accent\/50 { border-color: rgba(159, 48, 44, 0.5); }
+body .border-accent\/40 { border-color: rgba(159, 48, 44, 0.4); }
+body .border-accent\/30 { border-color: rgba(159, 48, 44, 0.3); }
+body .border-accent\/15 { border-color: rgba(159, 48, 44, 0.18); }
+body .hover\:border-accent:hover { border-color: var(--accent); }
+body .hover\:bg-accent-strong:hover { background-color: var(--accent-strong); }
+body .hover\:text-accent-strong:hover { color: var(--accent-strong); }
+
+@media (min-width: 640px) {
+  .section-card { border-radius: 0.75rem !important; }
 }
 
 .reveal {
@@ -116,4 +136,32 @@ a {
     transform: none;
     transition: none;
   }
+}
+
+@media print {
+  @page { margin: 12mm; }
+
+  body {
+    background: #fff;
+    color: #111;
+  }
+
+  body > header,
+  body > footer,
+  .print-controls {
+    display: none !important;
+  }
+
+  .resume-page {
+    padding: 0 !important;
+  }
+
+  .resume-page .section-card {
+    border: 0;
+    background: #fff;
+  }
+
+  .resume-page a { color: inherit; }
+  .resume-page section,
+  .resume-page article { break-inside: avoid; }
 }

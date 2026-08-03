@@ -1,6 +1,7 @@
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
 import SectionHeading from "@/components/ui/section-heading";
+import TechLogo from "@/components/ui/tech-logo";
 import { portfolio } from "@/data/portfolio";
 
 export default function SkillsSection() {
@@ -23,7 +24,8 @@ export default function SkillsSection() {
                 </h3>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {items.map((item) => (
-                    <span key={item} className="tag rounded-full px-3 py-1 text-sm">
+                    <span key={item} className="tag inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm">
+                      <TechLogo name={item} compact />
                       {item}
                     </span>
                   ))}

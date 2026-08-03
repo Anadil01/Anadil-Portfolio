@@ -11,14 +11,17 @@ export default function HeroSection() {
         <Reveal>
           <div className="code-grid section-card overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 sm:py-16">
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1.25fr_0.75fr]">
-              <div className="space-y-8">
+              <div className="flex h-full flex-col space-y-8">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
                     {portfolio.profile.location}
                   </span>
-                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
-                    {portfolio.profile.availability}
-                  </span>
+                  <Link
+                    href="/#contact"
+                    className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-medium text-accent-strong transition hover:border-accent hover:bg-accent hover:text-slate-950"
+                  >
+                    ● {portfolio.profile.availability} — Let&apos;s talk
+                  </Link>
                 </div>
                 <div className="space-y-5">
                   <h1 className="font-mono text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
@@ -41,13 +44,12 @@ export default function HeroSection() {
                   >
                     View Projects
                   </Link>
-                  <a
-                    href={portfolio.profile.resumeHref}
-                    download
+                  <Link
+                    href="/resume"
                     className="rounded-full border border-border bg-white/[0.03] px-6 py-3 text-sm font-medium text-slate-100 transition hover:-translate-y-0.5 hover:border-accent hover:text-accent-strong"
                   >
-                    Download Resume
-                  </a>
+                    View Resume
+                  </Link>
                   <Link
                     href="/#contact"
                     className="rounded-full border border-border px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent-strong"
@@ -55,6 +57,18 @@ export default function HeroSection() {
                     Contact
                   </Link>
                 </div>
+                <aside className="mt-auto border-t border-border pt-8">
+                  <p className="font-mono text-xs uppercase tracking-[0.28em] text-accent">
+                    Approach
+                  </p>
+                  <p className="mt-4 max-w-xl font-mono text-2xl leading-snug text-white sm:text-3xl">
+                    Thoughtful interfaces. Dependable systems. Work that earns trust.
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-400">
+                    <span>Based in {portfolio.profile.location}</span>
+                    <span className="text-accent">● {portfolio.profile.availability}</span>
+                  </div>
+                </aside>
               </div>
               <div className="space-y-5">
                 <div className="section-card overflow-hidden rounded-[1.5rem]">
@@ -68,8 +82,13 @@ export default function HeroSection() {
                       className="scale-[1.01] object-cover object-center"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#08101d] via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-black/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent-strong backdrop-blur">
-                      Available for Work
+                    <div className="absolute bottom-4 left-4 border border-white/70 bg-[rgba(255,253,248,0.92)] px-4 py-2 text-slate-950 shadow-sm backdrop-blur">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
+                        Status
+                      </p>
+                      <p className="mt-1 text-xs font-medium">
+                        ● Open to opportunities
+                      </p>
                     </div>
                   </div>
                 </div>

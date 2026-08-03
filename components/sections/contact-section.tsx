@@ -1,4 +1,5 @@
 import Container from "@/components/ui/container";
+import Link from "next/link";
 import Reveal from "@/components/ui/reveal";
 import SectionHeading from "@/components/ui/section-heading";
 import { portfolio } from "@/data/portfolio";
@@ -56,13 +57,12 @@ export default function ContactSection({
               >
                 {portfolio.profile.email}
               </a>
-              <a
-                href={portfolio.profile.resumeHref}
-                download
+              <Link
+                href="/resume"
                 className="mt-3 inline-flex rounded-full border border-border px-5 py-3 text-sm font-medium text-slate-100 transition hover:border-accent hover:text-accent-strong"
               >
-                Download Resume
-              </a>
+                View Resume
+              </Link>
             </article>
           </Reveal>
           <Reveal className="[transition-delay:90ms]">

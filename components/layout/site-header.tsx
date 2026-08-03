@@ -36,11 +36,11 @@ export default function SiteHeader() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-[rgba(7,12,24,0.88)] backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-[rgba(244,240,232,0.92)] backdrop-blur">
       <Container className="py-4">
         <div className="flex items-center justify-between gap-4">
           <Link href="/#about" className="min-w-0">
-            <div className="font-mono text-sm uppercase tracking-[0.28em] text-accent">
+            <div className="font-mono text-lg font-semibold tracking-[0.08em] text-accent">
               Anadil Gazi
             </div>
             <div className="truncate text-xs text-slate-400">
@@ -81,7 +81,7 @@ export default function SiteHeader() {
                       className={`rounded-full px-4 py-2 text-sm transition ${
                         active
                           ? "border border-accent/40 bg-accent/10 font-medium text-accent-strong"
-                          : "text-slate-400 hover:text-white"
+                          : "text-slate-400 hover:text-slate-950"
                       }`}
                     >
                       {link.label}
@@ -91,6 +91,12 @@ export default function SiteHeader() {
               })}
             </ul>
           </nav>
+          <Link
+            href="/resume"
+            className="hidden rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-sm font-medium text-accent-strong transition hover:bg-accent hover:text-slate-950 lg:inline-flex"
+          >
+            Resume
+          </Link>
         </div>
         {mobileOpen ? (
           <nav id="mobile-nav" aria-label="Mobile" className="pt-4 md:hidden">
@@ -114,6 +120,15 @@ export default function SiteHeader() {
                   </li>
                 );
               })}
+              <li>
+                <Link
+                  href="/resume"
+                  className="block rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm font-medium text-accent-strong"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  View Resume
+                </Link>
+              </li>
             </ul>
           </nav>
         ) : null}
