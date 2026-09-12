@@ -1,46 +1,33 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IExperience extends Document {
-  company: string;
   role: string;
-  startDate: string;
-  endDate?: string;
-  current: boolean;
-  description: string;
-  technologies: string[];
+  company: string;
+  period: string;
+  points: string[];
   order: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const ExperienceSchema = new Schema<IExperience>(
   {
-    company: {
-      type: String,
-      required: true,
-    },
-
     role: {
       type: String,
       required: true,
     },
 
-    startDate: {
+    company: {
       type: String,
       required: true,
     },
 
-    endDate: String,
-
-    current: {
-      type: Boolean,
-      default: false,
-    },
-
-    description: {
+    period: {
       type: String,
-      default: "",
+      required: true,
     },
 
-    technologies: {
+    points: {
       type: [String],
       default: [],
     },
@@ -50,6 +37,7 @@ const ExperienceSchema = new Schema<IExperience>(
       default: 0,
     },
   },
+
   {
     timestamps: true,
   }

@@ -6,10 +6,14 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate": "tsx scripts/migrate-portfolio.ts",
+    "create-admin": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "dotenv": "^17.4.2",
     "jose": "^6.2.12",
     "mongoose": "^9.10.0",
     "next": "16.2.6",
@@ -25,6 +29,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

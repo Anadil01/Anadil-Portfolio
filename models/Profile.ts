@@ -1,18 +1,45 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
+export interface ISocialLink {
+  label: string;
+  href: string;
+}
+
 export interface IProfile extends Document {
   name: string;
   role: string;
   location: string;
   email: string;
   availability: string;
-  image: string;
+
+  image: {
+    src: string;
+    alt: string;
+  };
+
   tagline: string;
   bio: string;
-  github?: string;
-  linkedin?: string;
-  website?: string;
+
+  certifications: string[];
+  socials: ISocialLink[];
+
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+const SocialLinkSchema = new Schema<ISocialLink>(
+  {
+    label: {
+      type: String,
+      required: true,
+    },
+    href: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false }
+);
 
 const ProfileSchema = new Schema<IProfile>(
   {
@@ -42,8 +69,14 @@ const ProfileSchema = new Schema<IProfile>(
     },
 
     image: {
-      type: String,
-      default: "",
+      src: {
+        type: String,
+        default: "",
+      },
+      alt: {
+        type: String,
+        default: "",
+      },
     },
 
     tagline: {
@@ -56,12 +89,17 @@ const ProfileSchema = new Schema<IProfile>(
       default: "",
     },
 
-    github: String,
+    certifications: {
+      type: [String],
+      default: [],
+    },
 
-    linkedin: String,
-
-    website: String,
+    socials: {
+      type: [SocialLinkSchema],
+      default: [],
+    },
   },
+
   {
     timestamps: true,
   }

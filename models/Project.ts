@@ -1,21 +1,81 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
+export interface IProjectScreenshot {
+  src: string;
+  alt: string;
+}
+
+export interface IProjectCaseStudy {
+  challenge: string;
+  solution: string;
+  result: string;
+  screenshots: IProjectScreenshot[];
+}
+
+export type ProjectStatus = "draft" | "published";
+
 export interface IProject extends Document {
   title: string;
   slug: string;
   description: string;
-  image: string;
-  category?: string;
-  technologies: string[];
+  impact: string;
   highlights: string[];
-  liveUrl?: string;
-  githubUrl?: string;
+
+  caseStudy: IProjectCaseStudy;
+
+  stack: string[];
+
+  image: {
+    src: string;
+    alt: string;
+  };
+
+  liveDemo?: string;
+  github?: string;
+
   featured: boolean;
-  status: "draft" | "published" | "archived";
+  status: ProjectStatus;
   order: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
+
+const ProjectScreenshotSchema = new Schema<IProjectScreenshot>(
+  {
+    src: {
+      type: String,
+      required: true,
+    },
+    alt: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const ProjectCaseStudySchema = new Schema<IProjectCaseStudy>(
+  {
+    challenge: {
+      type: String,
+      default: "",
+    },
+    solution: {
+      type: String,
+      default: "",
+    },
+    result: {
+      type: String,
+      default: "",
+    },
+    screenshots: {
+      type: [ProjectScreenshotSchema],
+      default: [],
+    },
+  },
+  { _id: false }
+);
 
 const ProjectSchema = new Schema<IProject>(
   {
@@ -38,19 +98,9 @@ const ProjectSchema = new Schema<IProject>(
       required: true,
     },
 
-    image: {
+    impact: {
       type: String,
       default: "",
-    },
-
-    category: {
-      type: String,
-      default: "Full Stack",
-    },
-
-    technologies: {
-      type: [String],
-      default: [],
     },
 
     highlights: {
@@ -58,12 +108,38 @@ const ProjectSchema = new Schema<IProject>(
       default: [],
     },
 
-    liveUrl: {
+    caseStudy: {
+      type: ProjectCaseStudySchema,
+      default: () => ({
+        challenge: "",
+        solution: "",
+        result: "",
+        screenshots: [],
+      }),
+    },
+
+    stack: {
+      type: [String],
+      default: [],
+    },
+
+    image: {
+      src: {
+        type: String,
+        default: "",
+      },
+      alt: {
+        type: String,
+        default: "",
+      },
+    },
+
+    liveDemo: {
       type: String,
       default: "",
     },
 
-    githubUrl: {
+    github: {
       type: String,
       default: "",
     },
@@ -75,7 +151,7 @@ const ProjectSchema = new Schema<IProject>(
 
     status: {
       type: String,
-      enum: ["draft", "published", "archived"],
+      enum: ["draft", "published"],
       default: "draft",
     },
 
@@ -84,6 +160,7 @@ const ProjectSchema = new Schema<IProject>(
       default: 0,
     },
   },
+
   {
     timestamps: true,
   }
