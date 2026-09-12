@@ -11,7 +11,19 @@ const navItems = [
   { label: "Contact", href: "/#contact" },
 ];
 
-export default function SiteHeader() {
+type SiteHeaderProfile = {
+  name: string;
+  role: string;
+  availability: string;
+};
+
+type SiteHeaderProps = {
+  profile: SiteHeaderProfile;
+};
+
+export default function SiteHeader({
+  profile,
+}: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -22,7 +34,10 @@ export default function SiteHeader() {
 
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    );
 
     return () => {
       window.removeEventListener(
@@ -45,6 +60,10 @@ export default function SiteHeader() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  const firstName =
+    profile.name.trim().split(" ")[0] ||
+    profile.name;
 
   return (
     <>
@@ -78,7 +97,7 @@ export default function SiteHeader() {
             </span>
 
             <span className="hidden text-sm font-semibold tracking-[-0.01em] text-white sm:block">
-              Anadil Gazi
+              {profile.name}
             </span>
           </Link>
 
@@ -102,8 +121,8 @@ export default function SiteHeader() {
           {/* DESKTOP CTA */}
 
           <div className="hidden items-center gap-2 md:flex">
-            <span className="flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.025] px-3.5 py-2 text-[10px] uppercase tracking-[0.16em] text-white/30">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+            <span className="flex max-w-[240px] items-center gap-2 truncate rounded-full border border-white/[0.07] bg-white/[0.025] px-3.5 py-2 text-[10px] uppercase tracking-[0.16em] text-white/30">
+              <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-emerald-400" />
 
               Available
             </span>
@@ -165,11 +184,17 @@ export default function SiteHeader() {
       >
         <div className="flex min-h-full flex-col px-6 pb-10 pt-28">
           <div className="flex-1">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-orange-400">
-              Navigation
-            </p>
+            <div className="mb-8">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-orange-400">
+                {profile.name}
+              </p>
 
-            <nav className="mt-8 flex flex-col">
+              <p className="mt-2 text-sm text-white/30">
+                {profile.role}
+              </p>
+            </div>
+
+            <nav className="flex flex-col">
               {navItems.map(
                 (item, index) => (
                   <Link
@@ -194,23 +219,26 @@ export default function SiteHeader() {
           </div>
 
           <div className="border-t border-white/[0.08] pt-6">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between gap-5">
+              <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/20">
                   Status
                 </p>
 
                 <p className="mt-2 flex items-center gap-2 text-sm text-white/50">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-400" />
 
-                  Open to opportunities
+                  <span className="truncate">
+                    {profile.availability ||
+                      "Open to opportunities"}
+                  </span>
                 </p>
               </div>
 
               <Link
                 href="/resume"
                 onClick={closeMenu}
-                className="rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-black"
+                className="shrink-0 rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-black"
               >
                 Resume ↗
               </Link>

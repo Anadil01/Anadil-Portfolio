@@ -13,9 +13,7 @@ export default function ImageUpload({
   onChange,
   label = "Upload image",
 }: ImageUploadProps) {
-  const inputRef = useRef<HTMLInputElement | null>(
-    null
-  );
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -35,9 +33,17 @@ export default function ImageUpload({
     // Validate file type
     // --------------------------------------------------
 
-    if (!file.type.startsWith("image/")) {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+      "image/gif",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
       setError(
-        "Please select a valid image file."
+        "Please select a valid JPG, PNG, WebP, AVIF or GIF image."
       );
 
       event.target.value = "";
@@ -51,9 +57,7 @@ export default function ImageUpload({
     const maxSize = 5 * 1024 * 1024;
 
     if (file.size > maxSize) {
-      setError(
-        "Image must be smaller than 5MB."
-      );
+      setError("Image must be smaller than 5MB.");
 
       event.target.value = "";
       return;
@@ -76,21 +80,49 @@ export default function ImageUpload({
 
       const data = await response.json();
 
+      // --------------------------------------------------
+      // Handle API error
+      // --------------------------------------------------
+
       if (!response.ok) {
         throw new Error(
-          data.error ||
-            "Image upload failed."
+          data.error || "Image upload failed."
         );
       }
 
-      if (!data.url) {
+      // --------------------------------------------------
+      // IMPORTANT:
+      // API returns:
+      //
+      // data.image.url
+      //
+      // not:
+      //
+      // data.url
+      // --------------------------------------------------
+
+      const imageUrl =
+        data?.image?.url || data?.url || "";
+
+      if (!imageUrl) {
+        console.error(
+          "Unexpected image upload response:",
+          data
+        );
+
         throw new Error(
           "Upload succeeded but no image URL was returned."
         );
       }
 
-      onChange(data.url);
+      // --------------------------------------------------
+      // Send URL back to parent form
+      // --------------------------------------------------
+
+      onChange(imageUrl);
     } catch (error) {
+      console.error("Image upload error:", error);
+
       setError(
         error instanceof Error
           ? error.message
@@ -104,10 +136,18 @@ export default function ImageUpload({
   }
 
   function openFilePicker() {
+    if (uploading) {
+      return;
+    }
+
     inputRef.current?.click();
   }
 
   function removeImage() {
+    if (uploading) {
+      return;
+    }
+
     onChange("");
     setError("");
   }
@@ -124,7 +164,7 @@ export default function ImageUpload({
         </p>
 
         <p className="mt-1 text-xs text-zinc-600">
-          PNG, JPG, WEBP or GIF · Maximum 5MB
+          PNG, JPG, WEBP, AVIF or GIF · Maximum 5MB
         </p>
       </div>
 
@@ -135,7 +175,7 @@ export default function ImageUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif"
+        accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
         onChange={handleFileChange}
         className="hidden"
       />
@@ -177,7 +217,7 @@ export default function ImageUpload({
            ================================================== */
 
         <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-black">
-          <div className="relative aspect-video">
+          <div className="group relative aspect-video">
             <img
               src={value}
               alt="Uploaded preview"
@@ -186,7 +226,7 @@ export default function ImageUpload({
 
             {/* Overlay */}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition duration-200 group-hover:opacity-100" />
 
             {/* Actions */}
 
@@ -195,7 +235,7 @@ export default function ImageUpload({
                 type="button"
                 onClick={openFilePicker}
                 disabled={uploading}
-                className="rounded-xl border border-white/10 bg-black/70 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white hover:text-black disabled:opacity-50"
+                className="rounded-xl border border-white/10 bg-black/70 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {uploading
                   ? "Uploading..."
@@ -206,7 +246,7 @@ export default function ImageUpload({
                 type="button"
                 onClick={removeImage}
                 disabled={uploading}
-                className="rounded-xl border border-red-400/20 bg-black/70 px-4 py-2.5 text-xs font-semibold text-red-300 backdrop-blur-md transition hover:bg-red-500 hover:text-white disabled:opacity-50"
+                className="rounded-xl border border-red-400/20 bg-black/70 px-4 py-2.5 text-xs font-semibold text-red-300 backdrop-blur-md transition hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Remove
               </button>
@@ -252,7 +292,7 @@ export default function ImageUpload({
       )}
 
       {/* ==================================================
-          CURRENT PATH
+          CURRENT URL
           ================================================== */}
 
       {value && (

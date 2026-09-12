@@ -3,10 +3,72 @@ import Link from "next/link";
 
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
+import { connectToDatabase } from "@/lib/mongodb";
+import Profile from "@/models/Profile";
 import { portfolio } from "@/data/portfolio";
 
-export default function HeroSection() {
-  const profile = portfolio.profile;
+export default async function HeroSection() {
+  /*
+   * ------------------------------------------------------
+   * PUBLIC PROFILE DATA
+   * ------------------------------------------------------
+   *
+   * The admin panel saves profile changes to MongoDB.
+   *
+   * Previously this component always read:
+   *
+   *   data/portfolio.ts
+   *
+   * which meant the public portfolio never saw changes
+   * made from /admin/profile.
+   *
+   * We now read the profile from MongoDB.
+   *
+   * The original portfolio data remains as a fallback so
+   * the public site doesn't completely break if MongoDB
+   * is temporarily unavailable.
+   */
+
+  let profile = portfolio.profile;
+
+  try {
+    await connectToDatabase();
+
+    const databaseProfile = await Profile.findOne()
+      .lean();
+
+    if (databaseProfile) {
+      profile = {
+        name: databaseProfile.name,
+        role: databaseProfile.role,
+        location: databaseProfile.location,
+        email: databaseProfile.email,
+        availability:
+          databaseProfile.availability,
+
+        image: {
+          src: databaseProfile.image?.src || "",
+          alt:
+            databaseProfile.image?.alt ||
+            `Portrait of ${databaseProfile.name}`,
+        },
+
+        tagline: databaseProfile.tagline,
+        bio: databaseProfile.bio,
+
+        certifications:
+          databaseProfile.certifications || [],
+
+        socials:
+          databaseProfile.socials || [],
+      };
+    }
+  } catch (error) {
+    console.error(
+      "Failed to load public profile from MongoDB:",
+      error
+    );
+  }
 
   return (
     <section
@@ -58,7 +120,7 @@ export default function HeroSection() {
 
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                      Anadil Gazi
+                      {profile.name}
                     </p>
 
                     <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/30">
@@ -70,7 +132,7 @@ export default function HeroSection() {
                 <div className="hidden items-center gap-2 sm:flex">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
 
-                  <span className="text-xs text-white/40">
+                  <span className="max-w-[260px] truncate text-xs text-white/40">
                     {profile.availability}
                   </span>
                 </div>
@@ -83,7 +145,8 @@ export default function HeroSection() {
 
                 <div className="relative z-20 flex justify-center">
                   <span className="rounded-full border border-white/[0.12] bg-white/[0.04] px-4 py-2 text-xs text-white/60 backdrop-blur-xl">
-                    Hello, I&apos;m Anadil
+                    Hello, I&apos;m{" "}
+                    {profile.name.split(" ")[0]}
                     <span className="ml-2 text-orange-400">
                       ✦
                     </span>
@@ -96,7 +159,9 @@ export default function HeroSection() {
                   <h1 className="mx-auto max-w-6xl text-[clamp(3.6rem,11vw,10rem)] font-black leading-[0.82] tracking-[-0.07em] text-white">
                     <span className="block">
                       {profile.name.split(" ")[0]}
-                      <span className="text-orange-500">.</span>
+                      <span className="text-orange-500">
+                        .
+                      </span>
                     </span>
 
                     <span className="mt-2 block text-white/95">
@@ -129,14 +194,28 @@ export default function HeroSection() {
                   {/* Image */}
 
                   <div className="absolute inset-x-[7%] bottom-0 top-[5%] overflow-hidden">
-                    <Image
-                      src={profile.image.src}
-                      alt={profile.image.alt}
-                      fill
-                      priority
-                      sizes="(max-width: 640px) 300px, (max-width: 1024px) 390px, 450px"
-                      className="object-contain object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.45)]"
-                    />
+                    {profile.image.src ? (
+                      <Image
+                        src={profile.image.src}
+                        alt={profile.image.alt}
+                        fill
+                        priority
+                        sizes="(max-width: 640px) 300px, (max-width: 1024px) 390px, 450px"
+                        className="object-contain object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.45)]"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-center">
+                        <div>
+                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-2xl font-bold text-orange-400">
+                            A
+                          </div>
+
+                          <p className="mt-3 text-xs text-white/30">
+                            Profile image
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Left floating card */}
