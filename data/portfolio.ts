@@ -29,7 +29,7 @@ export type Project = {
 export const portfolio = {
   profile: {
     name: "Anadil Gazi",
-    role: "MERN Stack · Full-Stack Web Developer",
+    role: "MERN Stack · Full-Stack Developer",
     location: "India",
     email: "mdanadil32@gmail.com",
     availability: "Open to full-time roles and freelance work",
@@ -43,7 +43,7 @@ export const portfolio = {
       "Passionate about solving real-world problems, from AI-powered platforms to real-time collaboration systems.",
   },
   skills: {
-    Language: ["JavaScript", "Java", "SQL", "TypeScript (Basics)"],
+    Language: ["JavaScript", "Java", "SQL", "TypeScript"],
     Frontend: [
       "React.js",
       "Next.js",
