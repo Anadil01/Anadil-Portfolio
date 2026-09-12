@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 /* =========================================================
-   GLOBAL TOKENS
+   DESIGN TOKENS
    ========================================================= */
 
 :root {
-  --background: #090909;
+  --background: #080808;
   --foreground: #f5f5f5;
 
   --muted: #8a8a8a;
 
-  --surface: #111111;
+  --surface: #0f0f0f;
   --surface-strong: #151515;
 
   --border: rgba(255, 255, 255, 0.1);
@@ -36,8 +36,16 @@
   --color-accent-strong: var(--accent-strong);
 
   --font-sans: var(--font-body);
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+
+  --font-mono:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace;
 }
 
 /* =========================================================
@@ -46,13 +54,14 @@
 
 html {
   scroll-behavior: smooth;
+  background: #080808;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
 
-  background: #090909;
+  background: #080808;
   color: #f5f5f5;
 
   font-family: var(--font-body), sans-serif;
@@ -63,7 +72,7 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 90, 31, 0.25);
+  background: rgba(255, 90, 31, 0.3);
   color: #ffffff;
 }
 
@@ -80,39 +89,21 @@ select {
 }
 
 /* =========================================================
-   PUBLIC WEBSITE THEME
-   IMPORTANT:
-   All public-site overrides live inside .site-theme.
-   Admin pages remain completely dark and are NOT affected.
+   PUBLIC WEBSITE
    ========================================================= */
 
 .site-theme {
-  --background: #f4f0e8;
-  --foreground: #20252b;
-
-  --muted: #697078;
-
-  --surface: #fffdf8;
-  --surface-strong: #fdf9f2;
-
-  --border: #d9d1c4;
-
-  --accent: #9f302c;
-  --accent-strong: #75221f;
-
   min-height: 100vh;
 
-  background-color: var(--background);
-
-  background-image:
+  background:
     radial-gradient(
-      rgba(32, 37, 43, 0.055) 0.6px,
-      transparent 0.6px
-    );
+      circle at 50% 10%,
+      rgba(255, 90, 31, 0.045),
+      transparent 28rem
+    ),
+    #080808;
 
-  background-size: 8px 8px;
-
-  color: var(--foreground);
+  color: #f5f5f5;
 
   font-family: var(--font-body), sans-serif;
 }
@@ -122,24 +113,27 @@ select {
    ========================================================= */
 
 .site-theme .text-white {
-  color: #20252b;
+  color: #ffffff;
 }
 
-.site-theme .text-slate-100,
+.site-theme .text-slate-100 {
+  color: #f1f1f1;
+}
+
 .site-theme .text-slate-200 {
-  color: #30363d;
+  color: #dedede;
 }
 
 .site-theme .text-slate-300 {
-  color: #4c545d;
+  color: #b8b8b8;
 }
 
 .site-theme .text-slate-400 {
-  color: #697078;
+  color: #8d8d8d;
 }
 
 .site-theme .text-slate-500 {
-  color: #7d7469;
+  color: #666666;
 }
 
 .site-theme .text-accent {
@@ -155,23 +149,27 @@ select {
    ========================================================= */
 
 .site-theme .border-border {
-  border-color: var(--border);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .site-theme .border-accent\/50 {
-  border-color: rgba(159, 48, 44, 0.5);
+  border-color: rgba(255, 90, 31, 0.5);
 }
 
 .site-theme .border-accent\/40 {
-  border-color: rgba(159, 48, 44, 0.4);
+  border-color: rgba(255, 90, 31, 0.4);
 }
 
 .site-theme .border-accent\/30 {
-  border-color: rgba(159, 48, 44, 0.3);
+  border-color: rgba(255, 90, 31, 0.3);
 }
 
-.site-theme .border-accent\/15 {
-  border-color: rgba(159, 48, 44, 0.18);
+.site-theme .border-accent\/20 {
+  border-color: rgba(255, 90, 31, 0.2);
+}
+
+.site-theme .border-accent\/10 {
+  border-color: rgba(255, 90, 31, 0.1);
 }
 
 /* =========================================================
@@ -179,15 +177,23 @@ select {
    ========================================================= */
 
 .site-theme .bg-surface {
-  background-color: var(--surface);
+  background-color: #0f0f0f;
 }
 
 .site-theme .bg-white\/\[0\.03\] {
-  background-color: rgba(255, 253, 248, 0.7);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.site-theme .bg-white\/\[0\.04\] {
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .site-theme .bg-white\/\[0\.05\] {
-  background-color: rgba(70, 58, 42, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.site-theme .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .site-theme .bg-accent {
@@ -195,11 +201,7 @@ select {
 }
 
 .site-theme .bg-accent\/10 {
-  background-color: rgba(159, 48, 44, 0.08);
-}
-
-.site-theme .bg-accent\/\[0\.06\] {
-  background-color: rgba(159, 48, 44, 0.05);
+  background-color: rgba(255, 90, 31, 0.1);
 }
 
 /* =========================================================
@@ -208,6 +210,10 @@ select {
 
 .site-theme .hover\:border-accent:hover {
   border-color: var(--accent);
+}
+
+.site-theme .hover\:bg-accent:hover {
+  background-color: var(--accent);
 }
 
 .site-theme .hover\:bg-accent-strong:hover {
@@ -219,35 +225,28 @@ select {
 }
 
 /* =========================================================
-   PUBLIC CARDS
+   GLASS CARDS
    ========================================================= */
 
 .site-theme .section-card {
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-  background: rgba(255, 253, 248, 0.9);
+  background: rgba(255, 255, 255, 0.025);
 
-  box-shadow: none;
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .site-theme .section-shell {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* =========================================================
-   PUBLIC TAGS
-   ========================================================= */
-
-.site-theme .tag {
-  border: 1px solid #ded4c7;
-
-  background: #f8f3eb;
-
-  color: #4d5359;
-}
-
-/* =========================================================
-   PUBLIC CODE GRID
+   CODE / GRID BACKGROUND
    ========================================================= */
 
 .site-theme .code-grid {
@@ -265,12 +264,12 @@ select {
   background:
     linear-gradient(
       transparent 31px,
-      rgba(32, 37, 43, 0.045) 32px
+      rgba(255, 255, 255, 0.035) 32px
     ),
     linear-gradient(
       90deg,
       transparent 31px,
-      rgba(32, 37, 43, 0.045) 32px
+      rgba(255, 255, 255, 0.035) 32px
     );
 
   background-size: 32px 32px;
@@ -279,13 +278,15 @@ select {
 }
 
 /* =========================================================
-   PUBLIC RESPONSIVE CARD
+   TAGS
    ========================================================= */
 
-@media (min-width: 640px) {
-  .site-theme .section-card {
-    border-radius: 0.75rem !important;
-  }
+.site-theme .tag {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #b8b8b8;
 }
 
 /* =========================================================
@@ -309,6 +310,44 @@ select {
 }
 
 /* =========================================================
+   FLOATING ANIMATION
+   ========================================================= */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.float-animation {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* =========================================================
+   GLOW PULSE
+   ========================================================= */
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* =========================================================
    REDUCED MOTION
    ========================================================= */
 
@@ -324,6 +363,21 @@ select {
     transform: none;
 
     transition: none;
+  }
+
+  .float-animation,
+  .glow-pulse {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 639px) {
+  .site-theme {
+    overflow-x: hidden;
   }
 }
 
@@ -353,7 +407,6 @@ select {
 
   .resume-page .section-card {
     border: 0;
-
     background: #ffffff;
   }
 

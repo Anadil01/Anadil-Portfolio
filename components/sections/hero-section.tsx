@@ -1,142 +1,291 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
 import { portfolio } from "@/data/portfolio";
 
 export default function HeroSection() {
+  const profile = portfolio.profile;
+
   return (
-    <section id="about" className="scroll-mt-28 pt-32 sm:pt-36">
+    <section
+      id="about"
+      className="relative scroll-mt-24 overflow-hidden bg-[#080808] pt-28 sm:pt-32 lg:pt-36"
+    >
+      {/* Ambient background */}
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-24 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-orange-500/[0.08] blur-[140px]"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-32 top-[30%] h-72 w-72 rounded-full bg-orange-600/[0.05] blur-[100px]"
+      />
+
       <Container>
         <Reveal>
-          <div className="code-grid section-card overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 sm:py-16">
-            <div className="relative z-10 grid gap-10 lg:grid-cols-[1.25fr_0.75fr]">
-              <div className="flex h-full flex-col space-y-8">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
-                    {portfolio.profile.location}
+          <div className="relative min-h-[calc(100vh-9rem)] overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[#0d0d0d]">
+            {/* Decorative grid */}
+
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                backgroundSize: "70px 70px",
+              }}
+            />
+
+            {/* Orange glow behind image */}
+
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-[45%] h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-orange-500/20 blur-[100px] sm:h-[480px] sm:w-[480px]"
+            />
+
+            <div className="relative z-10 px-5 pb-10 pt-8 sm:px-8 sm:pb-12 sm:pt-10 lg:px-12 lg:pb-14">
+              {/* TOP ROW */}
+
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-orange-500/30 bg-orange-500/10 text-sm font-semibold text-orange-400">
+                    A
                   </span>
-                  <Link
-                    href="/#contact"
-                    className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-medium text-accent-strong transition hover:border-accent hover:bg-accent hover:text-slate-950"
-                  >
-                    ● {portfolio.profile.availability} — Let&apos;s talk
-                  </Link>
-                </div>
-                <div className="space-y-5">
-                  <h1 className="font-mono text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-                    {portfolio.profile.name}
-                  </h1>
-                  <p className="font-mono text-lg text-accent-strong sm:text-xl">
-                    {portfolio.profile.role}
-                  </p>
-                  <p className="max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-                    {portfolio.profile.tagline}
-                  </p>
-                  <p className="max-w-3xl text-base leading-8 text-slate-400">
-                    {portfolio.profile.bio}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    href="/#projects"
-                    className="rounded-full border border-accent/50 bg-accent px-6 py-3 text-sm font-medium text-slate-950 transition hover:-translate-y-0.5 hover:bg-accent-strong"
-                  >
-                    View Projects
-                  </Link>
-                  <Link
-                    href="/resume"
-                    className="rounded-full border border-border bg-white/[0.03] px-6 py-3 text-sm font-medium text-slate-100 transition hover:-translate-y-0.5 hover:border-accent hover:text-accent-strong"
-                  >
-                    View Resume
-                  </Link>
-                  <Link
-                    href="/#contact"
-                    className="rounded-full border border-border px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent-strong"
-                  >
-                    Contact
-                  </Link>
-                </div>
-                <aside className="mt-auto border-t border-border pt-8">
-                  <p className="font-mono text-xs uppercase tracking-[0.28em] text-accent">
-                    Approach
-                  </p>
-                  <p className="mt-4 max-w-xl font-mono text-2xl leading-snug text-white sm:text-3xl">
-                    Thoughtful interfaces. Dependable systems. Work that earns trust.
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-400">
-                    <span>Based in {portfolio.profile.location}</span>
-                    <span className="text-accent">● {portfolio.profile.availability}</span>
+
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                      Anadil Gazi
+                    </p>
+
+                    <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      Full-Stack Developer
+                    </p>
                   </div>
-                </aside>
+                </div>
+
+                <div className="hidden items-center gap-2 sm:flex">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+
+                  <span className="text-xs text-white/40">
+                    {profile.availability}
+                  </span>
+                </div>
               </div>
-              <div className="space-y-5">
-                <div className="section-card overflow-hidden rounded-[1.5rem]">
-                  <div className="relative aspect-[4/5] w-full bg-black/20">
+
+              {/* HERO */}
+
+              <div className="relative mt-10 lg:mt-14">
+                {/* SMALL INTRO */}
+
+                <div className="relative z-20 flex justify-center">
+                  <span className="rounded-full border border-white/[0.12] bg-white/[0.04] px-4 py-2 text-xs text-white/60 backdrop-blur-xl">
+                    Hello, I&apos;m Anadil
+                    <span className="ml-2 text-orange-400">
+                      ✦
+                    </span>
+                  </span>
+                </div>
+
+                {/* HUGE TITLE */}
+
+                <div className="relative z-20 mt-5 text-center">
+                  <h1 className="mx-auto max-w-6xl text-[clamp(3.6rem,11vw,10rem)] font-black leading-[0.82] tracking-[-0.07em] text-white">
+                    <span className="block">
+                      {profile.name.split(" ")[0]}
+                      <span className="text-orange-500">.</span>
+                    </span>
+
+                    <span className="mt-2 block text-white/95">
+                      FULL-STACK
+                    </span>
+
+                    <span className="block text-white/95">
+                      DEVELOPER
+                    </span>
+                  </h1>
+                </div>
+
+                {/* PROFILE IMAGE */}
+
+                <div className="relative mx-auto mt-[-10px] h-[390px] w-[300px] sm:mt-[-25px] sm:h-[500px] sm:w-[390px] lg:mt-[-55px] lg:h-[570px] lg:w-[450px]">
+                  {/* Orange circle */}
+
+                  <div
+                    aria-hidden="true"
+                    className="absolute bottom-0 left-1/2 aspect-square w-[88%] -translate-x-1/2 rounded-full bg-orange-400"
+                  />
+
+                  {/* Circle border */}
+
+                  <div
+                    aria-hidden="true"
+                    className="absolute bottom-[-8px] left-1/2 aspect-square w-[88%] -translate-x-1/2 rounded-full border border-orange-300/20"
+                  />
+
+                  {/* Image */}
+
+                  <div className="absolute inset-x-[7%] bottom-0 top-[5%] overflow-hidden">
                     <Image
-                      src={portfolio.profile.image.src}
-                      alt={portfolio.profile.image.alt}
+                      src={profile.image.src}
+                      alt={profile.image.alt}
                       fill
                       priority
-                      sizes="(max-width: 1024px) 100vw, 32vw"
-                      className="scale-[1.01] object-cover object-center"
+                      sizes="(max-width: 640px) 300px, (max-width: 1024px) 390px, 450px"
+                      className="object-contain object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.45)]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#08101d] via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 border border-white/70 bg-[rgba(255,253,248,0.92)] px-4 py-2 text-slate-950 shadow-sm backdrop-blur">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
-                        Status
-                      </p>
-                      <p className="mt-1 text-xs font-medium">
-                        ● Open to opportunities
-                      </p>
+                  </div>
+
+                  {/* Left floating card */}
+
+                  <div className="absolute left-[-28px] top-[30%] hidden w-44 rounded-2xl border border-white/[0.12] bg-black/55 p-4 shadow-2xl backdrop-blur-xl sm:block lg:left-[-120px]">
+                    <div className="text-2xl text-white/80">
+                      “
                     </div>
+
+                    <p className="mt-1 text-xs leading-5 text-white/55">
+                      Building thoughtful interfaces and dependable systems.
+                    </p>
+
+                    <div className="mt-3 h-px w-full bg-white/[0.08]" />
+
+                    <p className="mt-2 text-[9px] uppercase tracking-[0.18em] text-orange-400">
+                      Developer mindset
+                    </p>
+                  </div>
+
+                  {/* Right experience card */}
+
+                  <div className="absolute right-[-20px] top-[24%] hidden rounded-2xl border border-white/[0.12] bg-black/55 px-5 py-4 shadow-2xl backdrop-blur-xl sm:block lg:right-[-105px]">
+                    <div className="flex items-center gap-1 text-orange-400">
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                      <span>★</span>
+                    </div>
+
+                    <p className="mt-2 text-2xl font-bold text-white">
+                      MERN
+                    </p>
+
+                    <p className="text-[9px] uppercase tracking-[0.18em] text-white/35">
+                      Full-stack ecosystem
+                    </p>
+                  </div>
+
+                  {/* Bottom left capability */}
+
+                  <div className="absolute bottom-[15%] left-[-5px] hidden rounded-full border border-white/[0.12] bg-black/60 px-4 py-2.5 text-xs text-white/65 backdrop-blur-xl sm:block lg:left-[-90px]">
+                    React · Next.js
+                  </div>
+
+                  {/* Bottom right capability */}
+
+                  <div className="absolute bottom-[10%] right-[-5px] hidden rounded-full border border-white/[0.12] bg-black/60 px-4 py-2.5 text-xs text-white/65 backdrop-blur-xl sm:block lg:right-[-80px]">
+                    Node · MongoDB
                   </div>
                 </div>
-                <div className="section-card rounded-[1.5rem] p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <p className="font-mono text-xs uppercase tracking-[0.28em] text-slate-500">
-                        profile.ts
-                      </p>
-                      <div className="mt-4 space-y-3 text-sm text-slate-300">
-                        <p>
-                          <span className="text-accent">focus:</span> scalable web
-                          apps
-                        </p>
-                        <p>
-                          <span className="text-accent">specialty:</span> MERN,
-                          secure APIs, real-time systems
-                        </p>
-                        <p>
-                          <span className="text-accent">tooling:</span> Socket.io,
-                          React Query, Zustand
-                        </p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      {Object.entries(portfolio.skills)
-                        .slice(0, 3)
-                        .map(([label, values]) => (
-                          <div
-                            key={label}
-                            className="rounded-2xl border border-border bg-white/[0.03] p-4"
-                          >
-                            <p className="font-mono text-xs uppercase tracking-[0.25em] text-slate-500">
-                              {label}
-                            </p>
-                            <p className="mt-2 text-sm leading-7 text-slate-300">
-                              {values.slice(0, 3).join(" · ")}
-                            </p>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
+
+                {/* DESCRIPTION */}
+
+                <div className="relative z-20 mx-auto mt-2 max-w-2xl text-center sm:mt-0">
+                  <p className="text-sm leading-7 text-white/45 sm:text-base sm:leading-8">
+                    {profile.tagline}
+                  </p>
+                </div>
+
+                {/* ACTIONS */}
+
+                <div className="relative z-20 mt-7 flex flex-wrap justify-center gap-3">
+                  <Link
+                    href="/#projects"
+                    className="group inline-flex items-center gap-3 rounded-full bg-orange-500 px-6 py-3.5 text-sm font-semibold text-black transition duration-300 hover:-translate-y-1 hover:bg-orange-400"
+                  >
+                    View projects
+
+                    <span className="transition-transform duration-300 group-hover:translate-x-1">
+                      ↗
+                    </span>
+                  </Link>
+
+                  <Link
+                    href="/#contact"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/[0.12] bg-white/[0.04] px-6 py-3.5 text-sm font-medium text-white/75 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                  >
+                    Let&apos;s talk
+                  </Link>
+                </div>
+
+                {/* BOTTOM INFO */}
+
+                <div className="relative z-20 mt-10 grid gap-3 border-t border-white/[0.08] pt-6 sm:grid-cols-3">
+                  <InfoCard
+                    number="01"
+                    title="BUILD"
+                    description="Modern web applications"
+                  />
+
+                  <InfoCard
+                    number="02"
+                    title="SCALE"
+                    description="Reliable backend systems"
+                  />
+
+                  <InfoCard
+                    number="03"
+                    title="SHIP"
+                    description="Products people can use"
+                  />
                 </div>
               </div>
+            </div>
+
+            {/* Vertical side label */}
+
+            <div className="absolute bottom-10 right-5 hidden [writing-mode:vertical-rl] lg:block">
+              <span className="text-[9px] uppercase tracking-[0.35em] text-white/20">
+                Scroll to explore
+              </span>
             </div>
           </div>
         </Reveal>
       </Container>
     </section>
+  );
+}
+
+function InfoCard({
+  number,
+  title,
+  description,
+}: {
+  number: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="group rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 backdrop-blur-xl transition duration-300 hover:border-orange-500/20 hover:bg-orange-500/[0.03]">
+      <div className="flex items-start justify-between gap-4">
+        <span className="font-mono text-[10px] text-orange-400">
+          {number}
+        </span>
+
+        <span className="text-white/15 transition group-hover:text-orange-400/60">
+          ↗
+        </span>
+      </div>
+
+      <p className="mt-5 text-xs font-semibold tracking-[0.2em] text-white">
+        {title}
+      </p>
+
+      <p className="mt-1 text-xs text-white/30">
+        {description}
+      </p>
+    </div>
   );
 }
