@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-import connectDB from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 import Resume from "@/models/Resume";
 import cloudinary from "@/lib/cloudinary";
 import { verifySessionToken } from "@/lib/auth";
@@ -34,7 +34,7 @@ export async function GET() {
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const resume = await Resume.findOne()
       .sort({ uploadedAt: -1 })
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const formData = await request.formData();
 
@@ -206,7 +206,7 @@ export async function DELETE() {
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const resume = await Resume.findOne();
 

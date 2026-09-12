@@ -30,9 +30,9 @@ async function migratePortfolio() {
   // --------------------------------------------------
 
   const archivedMigration = await Project.updateMany(
-    { status: "archived" },
-    { $set: { status: "draft" } }
-  );
+    { status: "archived" as never },
+  { $set: { status: "draft" } }
+);
 
   console.log(
     `🔄 Migrated ${archivedMigration.modifiedCount} archived project(s) to draft.\n`

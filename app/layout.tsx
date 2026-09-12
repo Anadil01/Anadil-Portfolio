@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import SiteFooter from "@/components/layout/site-footer";
-import SiteHeader from "@/components/layout/site-header";
 import { siteConfig } from "@/data/site";
 import "./globals.css";
 
@@ -16,10 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full bg-background text-foreground flex flex-col">
-        <SiteHeader />
+      <body className="min-h-full">
         {children}
-        <SiteFooter />
       </body>
     </html>
   );

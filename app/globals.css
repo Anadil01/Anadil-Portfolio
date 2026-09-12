@@ -1,30 +1,48 @@
 @import "tailwindcss";
 
+/* =========================================================
+   GLOBAL TOKENS
+   ========================================================= */
+
 :root {
-  --background: #f4f0e8;
-  --foreground: #20252b;
-  --muted: #697078;
-  --surface: #fffdf8;
-  --surface-strong: #fdf9f2;
-  --border: #d9d1c4;
-  --accent: #9f302c;
-  --accent-strong: #75221f;
+  --background: #090909;
+  --foreground: #f5f5f5;
+
+  --muted: #8a8a8a;
+
+  --surface: #111111;
+  --surface-strong: #151515;
+
+  --border: rgba(255, 255, 255, 0.1);
+
+  --accent: #ff5a1f;
+  --accent-strong: #ff7a45;
+
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-heading: Georgia, "Times New Roman", serif;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+
   --color-surface: var(--surface);
   --color-surface-strong: var(--surface-strong);
+
   --color-border: var(--border);
+
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
+
   --font-sans: var(--font-body);
-  --font-mono: var(--font-heading);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
+
+/* =========================================================
+   BASE
+   ========================================================= */
 
 html {
   scroll-behavior: smooth;
@@ -33,16 +51,20 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--background);
-  background-image: radial-gradient(rgba(32, 37, 43, 0.06) 0.6px, transparent 0.6px);
-  background-size: 8px 8px;
-  color: var(--foreground);
+
+  background: #090909;
+  color: #f5f5f5;
+
   font-family: var(--font-body), sans-serif;
+
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(56, 189, 248, 0.22);
+  background: rgba(255, 90, 31, 0.25);
+  color: #ffffff;
 }
 
 a {
@@ -50,71 +72,231 @@ a {
   text-decoration: none;
 }
 
-.section-card {
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* =========================================================
+   PUBLIC WEBSITE THEME
+   IMPORTANT:
+   All public-site overrides live inside .site-theme.
+   Admin pages remain completely dark and are NOT affected.
+   ========================================================= */
+
+.site-theme {
+  --background: #f4f0e8;
+  --foreground: #20252b;
+
+  --muted: #697078;
+
+  --surface: #fffdf8;
+  --surface-strong: #fdf9f2;
+
+  --border: #d9d1c4;
+
+  --accent: #9f302c;
+  --accent-strong: #75221f;
+
+  min-height: 100vh;
+
+  background-color: var(--background);
+
+  background-image:
+    radial-gradient(
+      rgba(32, 37, 43, 0.055) 0.6px,
+      transparent 0.6px
+    );
+
+  background-size: 8px 8px;
+
+  color: var(--foreground);
+
+  font-family: var(--font-body), sans-serif;
+}
+
+/* =========================================================
+   PUBLIC TYPOGRAPHY
+   ========================================================= */
+
+.site-theme .text-white {
+  color: #20252b;
+}
+
+.site-theme .text-slate-100,
+.site-theme .text-slate-200 {
+  color: #30363d;
+}
+
+.site-theme .text-slate-300 {
+  color: #4c545d;
+}
+
+.site-theme .text-slate-400 {
+  color: #697078;
+}
+
+.site-theme .text-slate-500 {
+  color: #7d7469;
+}
+
+.site-theme .text-accent {
+  color: var(--accent);
+}
+
+.site-theme .text-accent-strong {
+  color: var(--accent-strong);
+}
+
+/* =========================================================
+   PUBLIC BORDERS
+   ========================================================= */
+
+.site-theme .border-border {
+  border-color: var(--border);
+}
+
+.site-theme .border-accent\/50 {
+  border-color: rgba(159, 48, 44, 0.5);
+}
+
+.site-theme .border-accent\/40 {
+  border-color: rgba(159, 48, 44, 0.4);
+}
+
+.site-theme .border-accent\/30 {
+  border-color: rgba(159, 48, 44, 0.3);
+}
+
+.site-theme .border-accent\/15 {
+  border-color: rgba(159, 48, 44, 0.18);
+}
+
+/* =========================================================
+   PUBLIC BACKGROUNDS
+   ========================================================= */
+
+.site-theme .bg-surface {
+  background-color: var(--surface);
+}
+
+.site-theme .bg-white\/\[0\.03\] {
+  background-color: rgba(255, 253, 248, 0.7);
+}
+
+.site-theme .bg-white\/\[0\.05\] {
+  background-color: rgba(70, 58, 42, 0.05);
+}
+
+.site-theme .bg-accent {
+  background-color: var(--accent);
+}
+
+.site-theme .bg-accent\/10 {
+  background-color: rgba(159, 48, 44, 0.08);
+}
+
+.site-theme .bg-accent\/\[0\.06\] {
+  background-color: rgba(159, 48, 44, 0.05);
+}
+
+/* =========================================================
+   PUBLIC HOVER STATES
+   ========================================================= */
+
+.site-theme .hover\:border-accent:hover {
+  border-color: var(--accent);
+}
+
+.site-theme .hover\:bg-accent-strong:hover {
+  background-color: var(--accent-strong);
+}
+
+.site-theme .hover\:text-accent-strong:hover {
+  color: var(--accent-strong);
+}
+
+/* =========================================================
+   PUBLIC CARDS
+   ========================================================= */
+
+.site-theme .section-card {
   border: 1px solid var(--border);
+
   background: rgba(255, 253, 248, 0.9);
+
   box-shadow: none;
 }
 
-.section-shell {
+.site-theme .section-shell {
   border-top: 1px solid var(--border);
 }
 
-.tag {
+/* =========================================================
+   PUBLIC TAGS
+   ========================================================= */
+
+.site-theme .tag {
   border: 1px solid #ded4c7;
+
   background: #f8f3eb;
+
   color: #4d5359;
 }
 
-.code-grid {
+/* =========================================================
+   PUBLIC CODE GRID
+   ========================================================= */
+
+.site-theme .code-grid {
   position: relative;
 }
 
-.code-grid::before {
+.site-theme .code-grid::before {
   content: "";
+
   position: absolute;
   inset: 0;
+
   border-radius: inherit;
+
   background:
-    linear-gradient(transparent 31px, rgba(32, 37, 43, 0.045) 32px),
-    linear-gradient(90deg, transparent 31px, rgba(32, 37, 43, 0.045) 32px);
+    linear-gradient(
+      transparent 31px,
+      rgba(32, 37, 43, 0.045) 32px
+    ),
+    linear-gradient(
+      90deg,
+      transparent 31px,
+      rgba(32, 37, 43, 0.045) 32px
+    );
+
   background-size: 32px 32px;
+
   pointer-events: none;
 }
 
-/* The content components share the former dark palette utilities. These
-   editorial overrides keep their hierarchy while giving the whole site a
-   coherent paper-and-ink treatment. */
-body .text-white { color: #20252b; }
-body .text-slate-100,
-body .text-slate-200 { color: #30363d; }
-body .text-slate-300 { color: #4c545d; }
-body .text-slate-400 { color: #697078; }
-body .text-slate-500 { color: #7d7469; }
-body .text-accent { color: var(--accent); }
-body .text-accent-strong { color: var(--accent-strong); }
-body .border-border { border-color: var(--border); }
-body .bg-surface { background-color: var(--surface); }
-body .bg-white\/\[0\.03\] { background-color: rgba(255, 253, 248, 0.7); }
-body .bg-white\/\[0\.05\] { background-color: rgba(70, 58, 42, 0.05); }
-body .bg-accent { background-color: var(--accent); }
-body .bg-accent\/10 { background-color: rgba(159, 48, 44, 0.08); }
-body .bg-accent\/\[0\.06\] { background-color: rgba(159, 48, 44, 0.05); }
-body .border-accent\/50 { border-color: rgba(159, 48, 44, 0.5); }
-body .border-accent\/40 { border-color: rgba(159, 48, 44, 0.4); }
-body .border-accent\/30 { border-color: rgba(159, 48, 44, 0.3); }
-body .border-accent\/15 { border-color: rgba(159, 48, 44, 0.18); }
-body .hover\:border-accent:hover { border-color: var(--accent); }
-body .hover\:bg-accent-strong:hover { background-color: var(--accent-strong); }
-body .hover\:text-accent-strong:hover { color: var(--accent-strong); }
+/* =========================================================
+   PUBLIC RESPONSIVE CARD
+   ========================================================= */
 
 @media (min-width: 640px) {
-  .section-card { border-radius: 0.75rem !important; }
+  .site-theme .section-card {
+    border-radius: 0.75rem !important;
+  }
 }
+
+/* =========================================================
+   REVEAL ANIMATION
+   ========================================================= */
 
 .reveal {
   opacity: 0;
+
   transform: translateY(22px);
+
   transition:
     opacity 600ms ease,
     transform 600ms ease;
@@ -122,8 +304,13 @@ body .hover\:text-accent-strong:hover { color: var(--accent-strong); }
 
 .reveal.is-visible {
   opacity: 1;
+
   transform: translateY(0);
 }
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -133,17 +320,25 @@ body .hover\:text-accent-strong:hover { color: var(--accent-strong); }
   .reveal,
   .reveal.is-visible {
     opacity: 1;
+
     transform: none;
+
     transition: none;
   }
 }
 
+/* =========================================================
+   PRINT
+   ========================================================= */
+
 @media print {
-  @page { margin: 12mm; }
+  @page {
+    margin: 12mm;
+  }
 
   body {
-    background: #fff;
-    color: #111;
+    background: #ffffff;
+    color: #111111;
   }
 
   body > header,
@@ -158,10 +353,16 @@ body .hover\:text-accent-strong:hover { color: var(--accent-strong); }
 
   .resume-page .section-card {
     border: 0;
-    background: #fff;
+
+    background: #ffffff;
   }
 
-  .resume-page a { color: inherit; }
+  .resume-page a {
+    color: inherit;
+  }
+
   .resume-page section,
-  .resume-page article { break-inside: avoid; }
+  .resume-page article {
+    break-inside: avoid;
+  }
 }

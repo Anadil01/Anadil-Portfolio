@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-import connectDB from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 import Education from "@/models/Education";
 import { verifySessionToken } from "@/lib/auth";
 
@@ -42,7 +42,7 @@ export async function GET(
       );
     }
 
-    await connectDB();
+   await connectToDatabase();
 
     const { id } = await context.params;
 
@@ -80,7 +80,7 @@ export async function PUT(
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const { id } = await context.params;
     const body = await request.json();
@@ -151,7 +151,7 @@ export async function DELETE(
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const { id } = await context.params;
 

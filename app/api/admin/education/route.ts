@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-import { connectDB } from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 import Education from "@/models/Education";
 import { verifySessionToken } from "@/lib/auth";
 
@@ -33,7 +33,7 @@ export async function GET() {
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const education = await Education.find()
       .sort({ order: 1, createdAt: 1 })
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await connectDB();
+    await connectToDatabase();
 
     const body = await request.json();
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     const existingCount = await Education.countDocuments();
 
-    const education = await Education.create({
+    const educationData = {
       institution,
       degree,
       field: field || "",
@@ -92,7 +92,9 @@ export async function POST(request: NextRequest) {
         typeof body.order === "number"
           ? body.order
           : existingCount + 1,
-    });
+    } as unknown as Parameters<typeof Education.create>[0];
+
+    const education = await Education.create(educationData);
 
     return NextResponse.json(education, { status: 201 });
   } catch (error) {

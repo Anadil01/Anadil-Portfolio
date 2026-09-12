@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import Container from "@/components/ui/container";
 import TechLogo from "@/components/ui/tech-logo";
 import { portfolio } from "@/data/portfolio";
+import SiteShell from "@/components/layout/site-shell";
+
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
 
@@ -31,6 +33,7 @@ export default async function ProjectCaseStudyPage({ params }: ProjectPageProps)
   ];
 
   return (
+    <SiteShell>
     <main className="flex-1 pt-28 pb-20 sm:pt-32 sm:pb-28">
       <Container>
         <div className="mx-auto max-w-5xl">
@@ -75,5 +78,6 @@ export default async function ProjectCaseStudyPage({ params }: ProjectPageProps)
         </div>
       </Container>
     </main>
+    </SiteShell>
   );
 }

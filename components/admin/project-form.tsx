@@ -3,12 +3,16 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import ImageUpload from "@/components/admin/image-upload";
+
 type ProjectData = {
   _id?: string;
+
   title: string;
   slug: string;
   description: string;
   impact: string;
+
   highlights: string[];
 
   caseStudy: {
@@ -41,6 +45,7 @@ const emptyProject: ProjectData = {
   slug: "",
   description: "",
   impact: "",
+
   highlights: [],
 
   caseStudy: {
@@ -84,20 +89,13 @@ export default function ProjectForm({
     (initialProject?.stack || []).join(", ")
   );
 
-  const [highlightsText, setHighlightsText] =
-    useState(
-      (initialProject?.highlights || []).join("\n")
-    );
-
-  const [screenshotsText, setScreenshotsText] =
-    useState(
-      (initialProject?.caseStudy?.screenshots || [])
-        .map((item) => `${item.src}|${item.alt}`)
-        .join("\n")
-    );
+  const [highlightsText, setHighlightsText] = useState(
+    (initialProject?.highlights || []).join("\n")
+  );
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   function updateField(
     field: keyof ProjectData,
@@ -110,10 +108,7 @@ export default function ProjectForm({
   }
 
   function updateCaseStudy(
-    field:
-      | "challenge"
-      | "solution"
-      | "result",
+    field: "challenge" | "solution" | "result",
     value: string
   ) {
     setProject((current) => ({
@@ -125,15 +120,63 @@ export default function ProjectForm({
     }));
   }
 
-  function updateImage(
-    field: "src" | "alt",
-    value: string
-  ) {
+  function updateImage(field: "src" | "alt", value: string) {
     setProject((current) => ({
       ...current,
       image: {
         ...current.image,
         [field]: value,
+      },
+    }));
+  }
+
+  function addScreenshot() {
+    setProject((current) => ({
+      ...current,
+      caseStudy: {
+        ...current.caseStudy,
+        screenshots: [
+          ...current.caseStudy.screenshots,
+          {
+            src: "",
+            alt: "",
+          },
+        ],
+      },
+    }));
+  }
+
+  function updateScreenshot(
+    index: number,
+    field: "src" | "alt",
+    value: string
+  ) {
+    setProject((current) => ({
+      ...current,
+      caseStudy: {
+        ...current.caseStudy,
+        screenshots: current.caseStudy.screenshots.map(
+          (screenshot, screenshotIndex) =>
+            screenshotIndex === index
+              ? {
+                  ...screenshot,
+                  [field]: value,
+                }
+              : screenshot
+        ),
+      },
+    }));
+  }
+
+  function removeScreenshot(index: number) {
+    setProject((current) => ({
+      ...current,
+      caseStudy: {
+        ...current.caseStudy,
+        screenshots: current.caseStudy.screenshots.filter(
+          (_, screenshotIndex) =>
+            screenshotIndex !== index
+        ),
       },
     }));
   }
@@ -145,6 +188,7 @@ export default function ProjectForm({
 
     setSaving(true);
     setError("");
+    setSuccess("");
 
     const highlights = highlightsText
       .split("\n")
@@ -157,21 +201,9 @@ export default function ProjectForm({
       .filter(Boolean);
 
     const screenshots =
-      screenshotsText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => {
-          const [src, ...altParts] =
-            line.split("|");
-
-          return {
-            src: src.trim(),
-            alt:
-              altParts.join("|").trim() ||
-              project.title,
-          };
-        });
+      project.caseStudy.screenshots.filter(
+        (screenshot) => screenshot.src.trim()
+      );
 
     const payload = {
       ...project,
@@ -202,9 +234,16 @@ export default function ProjectForm({
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Failed to save project"
+            data.error ||
+            "Failed to save project."
         );
       }
+
+      setSuccess(
+        mode === "create"
+          ? "Project created successfully."
+          : "Project updated successfully."
+      );
 
       router.push("/admin/projects");
       router.refresh();
@@ -214,7 +253,7 @@ export default function ProjectForm({
       setError(
         error instanceof Error
           ? error.message
-          : "Failed to save project"
+          : "Failed to save project."
       );
     } finally {
       setSaving(false);
@@ -224,14 +263,24 @@ export default function ProjectForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-5xl space-y-8"
+      className="mx-auto max-w-5xl space-y-8 pb-32"
     >
-      {/* Basic */}
+      {/* BASIC INFORMATION */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Basic information
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            01
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Basic information
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            The core information visitors see about this project.
+          </p>
+        </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <Field
@@ -240,6 +289,7 @@ export default function ProjectForm({
             onChange={(value) =>
               updateField("title", value)
             }
+            required
           />
 
           <Field
@@ -248,18 +298,16 @@ export default function ProjectForm({
             onChange={(value) =>
               updateField("slug", value)
             }
+            required
           />
 
           <div className="md:col-span-2">
             <TextArea
               label="Description"
               value={project.description}
-              rows={4}
+              rows={5}
               onChange={(value) =>
-                updateField(
-                  "description",
-                  value
-                )
+                updateField("description", value)
               }
             />
           </div>
@@ -277,12 +325,22 @@ export default function ProjectForm({
         </div>
       </section>
 
-      {/* Stack + Highlights */}
+      {/* TECHNOLOGIES */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Technologies & highlights
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            02
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Technologies & highlights
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            Describe the technologies and strongest parts of the project.
+          </p>
+        </div>
 
         <div className="mt-6 space-y-5">
           <TextArea
@@ -299,7 +357,7 @@ export default function ProjectForm({
           <TextArea
             label="Highlights"
             value={highlightsText}
-            rows={6}
+            rows={7}
             onChange={setHighlightsText}
           />
 
@@ -309,20 +367,30 @@ export default function ProjectForm({
         </div>
       </section>
 
-      {/* Image */}
+      {/* MAIN IMAGE */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Main image
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            03
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Project image
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            Upload the main image displayed on your portfolio.
+          </p>
+        </div>
 
         <div className="mt-6 space-y-5">
-          <Field
-            label="Image URL"
+          <ImageUpload
             value={project.image.src}
             onChange={(value) =>
               updateImage("src", value)
             }
+            label="Main project image"
           />
 
           <Field
@@ -332,92 +400,176 @@ export default function ProjectForm({
               updateImage("alt", value)
             }
           />
-
-          {project.image.src && (
-            <img
-              src={project.image.src}
-              alt={project.image.alt}
-              className="h-48 w-full rounded-xl object-cover"
-            />
-          )}
         </div>
       </section>
 
-      {/* Case study */}
+      {/* CASE STUDY */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Case study
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            04
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Case study
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            Explain the problem, your approach, and the result.
+          </p>
+        </div>
 
         <div className="mt-6 space-y-5">
           <TextArea
             label="Challenge"
             value={project.caseStudy.challenge}
-            rows={4}
+            rows={5}
             onChange={(value) =>
-              updateCaseStudy(
-                "challenge",
-                value
-              )
+              updateCaseStudy("challenge", value)
             }
           />
 
           <TextArea
             label="Solution"
             value={project.caseStudy.solution}
-            rows={4}
+            rows={5}
             onChange={(value) =>
-              updateCaseStudy(
-                "solution",
-                value
-              )
+              updateCaseStudy("solution", value)
             }
           />
 
           <TextArea
             label="Result"
             value={project.caseStudy.result}
-            rows={4}
+            rows={5}
             onChange={(value) =>
-              updateCaseStudy(
-                "result",
-                value
-              )
+              updateCaseStudy("result", value)
             }
           />
-
-          <TextArea
-            label="Screenshots"
-            value={screenshotsText}
-            rows={5}
-            onChange={setScreenshotsText}
-          />
-
-          <p className="-mt-3 text-xs text-white/30">
-            One screenshot per line:
-            <br />
-            image-url | alt text
-          </p>
         </div>
       </section>
 
-      {/* Links */}
+      {/* SCREENSHOTS */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Links
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+              05
+            </p>
+
+            <h2 className="mt-2 text-lg font-semibold text-white">
+              Project screenshots
+            </h2>
+
+            <p className="mt-1 text-sm text-white/40">
+              Add screenshots that can be shown on the project detail page.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={addScreenshot}
+            className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-2.5 text-sm font-medium text-orange-300 transition hover:border-orange-500/50 hover:bg-orange-500/15"
+          >
+            + Add screenshot
+          </button>
+        </div>
+
+        {project.caseStudy.screenshots.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-dashed border-white/10 bg-black/20 px-5 py-10 text-center">
+            <p className="text-sm text-white/40">
+              No screenshots added yet.
+            </p>
+
+            <button
+              type="button"
+              onClick={addScreenshot}
+              className="mt-3 text-sm text-orange-400 transition hover:text-orange-300"
+            >
+              Add your first screenshot
+            </button>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-6">
+            {project.caseStudy.screenshots.map(
+              (screenshot, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl border border-white/[0.08] bg-black/20 p-5"
+                >
+                  <div className="mb-5 flex items-center justify-between">
+                    <p className="text-sm font-medium text-white">
+                      Screenshot {index + 1}
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeScreenshot(index)
+                      }
+                      className="text-xs text-red-400 transition hover:text-red-300"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="space-y-5">
+                    <ImageUpload
+                      value={screenshot.src}
+                      onChange={(value) =>
+                        updateScreenshot(
+                          index,
+                          "src",
+                          value
+                        )
+                      }
+                      label={`Screenshot ${index + 1}`}
+                    />
+
+                    <Field
+                      label="Alt text"
+                      value={screenshot.alt}
+                      onChange={(value) =>
+                        updateScreenshot(
+                          index,
+                          "alt",
+                          value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* LINKS */}
+
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            06
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Project links
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            Add the live project and source repository.
+          </p>
+        </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <Field
             label="Live demo URL"
             value={project.liveDemo || ""}
             onChange={(value) =>
-              updateField(
-                "liveDemo",
-                value
-              )
+              updateField("liveDemo", value)
             }
           />
 
@@ -425,21 +577,28 @@ export default function ProjectForm({
             label="GitHub URL"
             value={project.github || ""}
             onChange={(value) =>
-              updateField(
-                "github",
-                value
-              )
+              updateField("github", value)
             }
           />
         </div>
       </section>
 
-      {/* Publishing */}
+      {/* PUBLISHING */}
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h2 className="text-lg font-semibold">
-          Publishing
-        </h2>
+      <section className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-orange-400">
+            07
+          </p>
+
+          <h2 className="mt-2 text-lg font-semibold text-white">
+            Publishing
+          </h2>
+
+          <p className="mt-1 text-sm text-white/40">
+            Control visibility and ordering on your portfolio.
+          </p>
+        </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div>
@@ -455,7 +614,7 @@ export default function ProjectForm({
                   event.target.value
                 )
               }
-              className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none focus:border-orange-500"
+              className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none transition focus:border-orange-500"
             >
               <option value="draft">
                 Draft
@@ -503,36 +662,58 @@ export default function ProjectForm({
         </label>
       </section>
 
+      {/* ERROR */}
+
       {error && (
         <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
           {error}
         </div>
       )}
 
-      {/* Save */}
+      {success && (
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+          {success}
+        </div>
+      )}
 
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={() =>
-            router.push("/admin/projects")
-          }
-          className="rounded-xl border border-white/10 px-5 py-3 text-sm transition hover:bg-white/5"
-        >
-          Cancel
-        </button>
+      {/* STICKY SAVE BAR */}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-orange-400 disabled:opacity-50"
-        >
-          {saving
-            ? "Saving..."
-            : mode === "create"
-              ? "Create project"
-              : "Save changes"}
-        </button>
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/[0.08] bg-[#0c0c0c]/95 px-5 py-4 backdrop-blur-xl lg:left-[290px]">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+          <div className="hidden sm:block">
+            <p className="text-sm font-medium text-white">
+              Ready to publish?
+            </p>
+
+            <p className="text-xs text-white/35">
+              Save your changes to update your portfolio.
+            </p>
+          </div>
+
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                router.push("/admin/projects")
+              }
+              className="rounded-xl border border-white/10 px-5 py-3 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving
+                ? "Saving..."
+                : mode === "create"
+                  ? "Create project"
+                  : "Save changes"}
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   );
@@ -543,11 +724,13 @@ function Field({
   value,
   onChange,
   type = "text",
+  required = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   type?: string;
+  required?: boolean;
 }) {
   return (
     <div>
@@ -561,11 +744,8 @@ function Field({
         onChange={(event) =>
           onChange(event.target.value)
         }
-        required={
-          label === "Title" ||
-          label === "Slug"
-        }
-        className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none transition focus:border-orange-500"
+        required={required}
+        className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/20 focus:border-orange-500"
       />
     </div>
   );
@@ -594,7 +774,7 @@ function TextArea({
           onChange(event.target.value)
         }
         rows={rows}
-        className="w-full resize-y rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none transition focus:border-orange-500"
+        className="w-full resize-y rounded-xl border border-white/10 bg-black px-4 py-3 text-sm leading-6 text-white outline-none transition placeholder:text-white/20 focus:border-orange-500"
       />
     </div>
   );

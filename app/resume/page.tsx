@@ -2,6 +2,8 @@ import Link from "next/link";
 import Container from "@/components/ui/container";
 import PrintResumeButton from "@/components/ui/print-resume-button";
 import { portfolio } from "@/data/portfolio";
+import SiteShell from "@/components/layout/site-shell";
+
 
 export const metadata = {
   title: `Resume | ${portfolio.profile.name}`,
@@ -10,6 +12,7 @@ export const metadata = {
 
 export default function ResumePage() {
   return (
+     <SiteShell>
     <main className="resume-page flex-1 pt-28 pb-16 sm:pt-32 sm:pb-24">
       <Container>
         <div className="mx-auto max-w-5xl">
@@ -133,6 +136,7 @@ export default function ResumePage() {
         </div>
       </Container>
     </main>
+    </SiteShell>
   );
 }
 
