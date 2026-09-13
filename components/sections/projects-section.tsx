@@ -15,14 +15,9 @@ export default function ProjectsSection({
 }: ProjectsSectionProps) {
   const projects = portfolio.projects;
 
-  const featuredProject =
-    projects.find((project) => project.featured) ||
-    projects[0];
+  const featuredProject = projects[0];
 
-  const remainingProjects = projects.filter(
-    (project) =>
-      project.slug !== featuredProject?.slug
-  );
+  const remainingProjects = projects.slice(1);
 
   return (
     <section
@@ -77,19 +72,17 @@ export default function ProjectsSection({
 
           {remainingProjects.length > 0 && (
             <div className="mt-5 grid gap-5 md:grid-cols-2">
-              {remainingProjects.map(
-                (project, index) => (
-                  <Reveal
-                    key={project.slug}
-                    className={`[transition-delay:${index * 100}ms]`}
-                  >
-                    <ProjectCard
-                      project={project}
-                      index={index + 2}
-                    />
-                  </Reveal>
-                )
-              )}
+              {remainingProjects.map((project, index) => (
+                <Reveal
+                  key={project.slug}
+                  className={`[transition-delay:${index * 100}ms]`}
+                >
+                  <ProjectCard
+                    project={project}
+                    index={index + 2}
+                  />
+                </Reveal>
+              ))}
             </div>
           )}
 
@@ -130,10 +123,7 @@ function FeaturedProject({
         {project.image?.src ? (
           <Image
             src={project.image.src}
-            alt={
-              project.image.alt ||
-              project.title
-            }
+            alt={project.image.alt || project.title}
             fill
             sizes="(max-width: 640px) 100vw, 90vw"
             className="object-cover object-top transition duration-700 ease-out group-hover:scale-[1.035]"
@@ -148,7 +138,7 @@ function FeaturedProject({
 
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent" />
 
-        {/* FEATURED LABEL */}
+        {/* PROJECT LABEL */}
 
         <div className="absolute left-5 top-5 rounded-full border border-white/[0.12] bg-black/55 px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.2em] text-orange-300 backdrop-blur-xl sm:left-7 sm:top-7">
           Featured project
@@ -164,9 +154,7 @@ function FeaturedProject({
 
         <div className="absolute inset-x-5 bottom-5 sm:inset-x-7 sm:bottom-7 lg:max-w-2xl">
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-orange-400">
-            {project.status === "published"
-              ? "Live build"
-              : "In development"}
+            Live build
           </p>
 
           <h3 className="mt-2 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl lg:text-5xl">
@@ -180,21 +168,16 @@ function FeaturedProject({
           {/* TECH */}
 
           <div className="mt-5 flex flex-wrap gap-2">
-            {project.stack
-              .slice(0, 5)
-              .map((item) => (
-                <span
-                  key={item}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/40 px-3 py-1.5 text-[11px] text-white/60 backdrop-blur-md"
-                >
-                  <TechLogo
-                    name={item}
-                    compact
-                  />
+            {project.stack.slice(0, 5).map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/40 px-3 py-1.5 text-[11px] text-white/60 backdrop-blur-md"
+              >
+                <TechLogo name={item} compact />
 
-                  {item}
-                </span>
-              ))}
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </div>
@@ -203,16 +186,14 @@ function FeaturedProject({
 
       <div className="flex flex-col gap-4 border-t border-white/[0.07] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div className="flex flex-wrap gap-2">
-          {project.highlights
-            .slice(0, 2)
-            .map((highlight) => (
-              <span
-                key={highlight}
-                className="rounded-lg bg-white/[0.035] px-3 py-2 text-xs text-white/40"
-              >
-                {highlight}
-              </span>
-            ))}
+          {project.highlights.slice(0, 2).map((highlight) => (
+            <span
+              key={highlight}
+              className="rounded-lg bg-white/[0.035] px-3 py-2 text-xs text-white/40"
+            >
+              {highlight}
+            </span>
+          ))}
         </div>
 
         <div className="flex shrink-0 gap-2">
@@ -260,10 +241,7 @@ function ProjectCard({
         {project.image?.src ? (
           <Image
             src={project.image.src}
-            alt={
-              project.image.alt ||
-              project.title
-            }
+            alt={project.image.alt || project.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-top transition duration-700 group-hover:scale-[1.04]"
@@ -287,9 +265,7 @@ function ProjectCard({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.22em] text-orange-400">
-              {project.status === "published"
-                ? "Published"
-                : "Draft"}
+              Project
             </p>
 
             <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-white">
@@ -297,11 +273,9 @@ function ProjectCard({
             </h3>
           </div>
 
-          {project.featured && (
-            <span className="shrink-0 text-orange-400">
-              ★
-            </span>
-          )}
+          <span className="shrink-0 text-orange-400">
+            ↗
+          </span>
         </div>
 
         <p className="mt-4 line-clamp-3 text-sm leading-6 text-white/40">
@@ -311,21 +285,16 @@ function ProjectCard({
         {/* STACK */}
 
         <div className="mt-5 flex flex-wrap gap-2">
-          {project.stack
-            .slice(0, 4)
-            .map((item) => (
-              <span
-                key={item}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.025] px-2.5 py-1.5 text-[11px] text-white/45"
-              >
-                <TechLogo
-                  name={item}
-                  compact
-                />
+          {project.stack.slice(0, 4).map((item) => (
+            <span
+              key={item}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.025] px-2.5 py-1.5 text-[11px] text-white/45"
+            >
+              <TechLogo name={item} compact />
 
-                {item}
-              </span>
-            ))}
+              {item}
+            </span>
+          ))}
         </div>
 
         {/* ACTIONS */}

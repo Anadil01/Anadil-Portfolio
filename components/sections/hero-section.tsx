@@ -9,24 +9,10 @@ import { portfolio } from "@/data/portfolio";
 
 export default async function HeroSection() {
   /*
-   * ------------------------------------------------------
-   * PUBLIC PROFILE DATA
-   * ------------------------------------------------------
+   * Load the public profile from MongoDB.
    *
-   * The admin panel saves profile changes to MongoDB.
-   *
-   * Previously this component always read:
-   *
-   *   data/portfolio.ts
-   *
-   * which meant the public portfolio never saw changes
-   * made from /admin/profile.
-   *
-   * We now read the profile from MongoDB.
-   *
-   * The original portfolio data remains as a fallback so
-   * the public site doesn't completely break if MongoDB
-   * is temporarily unavailable.
+   * The original portfolio data is kept as a fallback
+   * in case MongoDB is temporarily unavailable.
    */
 
   let profile = portfolio.profile;
@@ -34,8 +20,7 @@ export default async function HeroSection() {
   try {
     await connectToDatabase();
 
-    const databaseProfile = await Profile.findOne()
-      .lean();
+    const databaseProfile = await Profile.findOne().lean();
 
     if (databaseProfile) {
       profile = {
@@ -43,11 +28,12 @@ export default async function HeroSection() {
         role: databaseProfile.role,
         location: databaseProfile.location,
         email: databaseProfile.email,
-        availability:
-          databaseProfile.availability,
+        availability: databaseProfile.availability,
 
         image: {
-          src: databaseProfile.image?.src || "",
+          src:
+            databaseProfile.image?.src ||
+            portfolio.profile.image.src,
           alt:
             databaseProfile.image?.alt ||
             `Portrait of ${databaseProfile.name}`,
@@ -55,12 +41,6 @@ export default async function HeroSection() {
 
         tagline: databaseProfile.tagline,
         bio: databaseProfile.bio,
-
-        certifications:
-          databaseProfile.certifications || [],
-
-        socials:
-          databaseProfile.socials || [],
       };
     }
   } catch (error) {
