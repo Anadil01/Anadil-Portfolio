@@ -9,14 +9,6 @@ import Project, {
 
 type ProjectStatusInput = "draft" | "published";
 
-function isProjectStatus(
-  value: unknown
-): value is ProjectStatusInput {
-  return (
-    value === "draft" || value === "published"
-  );
-}
-
 function normalizeProjectStatus(
   value: unknown
 ): ProjectStatus {
@@ -133,6 +125,10 @@ export async function PUT(
 
     const body = await request.json();
 
+    // --------------------------------------------------
+    // VALIDATION
+    // --------------------------------------------------
+
     if (!body.title?.trim()) {
       return NextResponse.json(
         {
@@ -153,62 +149,101 @@ export async function PUT(
       );
     }
 
+    const status: ProjectStatusInput =
+      body.status === "published"
+        ? "published"
+        : "draft";
+
+    const isFeatured = Boolean(body.featured);
+
     await connectToDatabase();
+
+    // --------------------------------------------------
+    // CHECK DUPLICATE SLUG
+    // --------------------------------------------------
 
     const duplicate = await Project.findOne({
       slug: body.slug.trim(),
       _id: {
         $ne: id,
       },
-    });
+    }).lean();
 
     if (duplicate) {
       return NextResponse.json(
         {
           success: false,
-          message: "Another project already uses this slug",
+          message:
+            "Another project already uses this slug",
         },
         { status: 409 }
       );
     }
 
+    // --------------------------------------------------
+    // UPDATE PROJECT
+    // --------------------------------------------------
+
     const project = await Project.findByIdAndUpdate(
       id,
       {
         title: body.title.trim(),
+
         slug: body.slug.trim(),
+
         description: body.description || "",
+
         impact: body.impact || "",
-        highlights: body.highlights || [],
+
+        highlights: Array.isArray(body.highlights)
+          ? body.highlights
+          : [],
 
         caseStudy: {
-          challenge: body.caseStudy?.challenge || "",
-          solution: body.caseStudy?.solution || "",
-          result: body.caseStudy?.result || "",
-          screenshots: body.caseStudy?.screenshots || [],
+          challenge:
+            body.caseStudy?.challenge || "",
+
+          solution:
+            body.caseStudy?.solution || "",
+
+          result:
+            body.caseStudy?.result || "",
+
+          screenshots:
+            Array.isArray(
+              body.caseStudy?.screenshots
+            )
+              ? body.caseStudy.screenshots
+              : [],
         },
 
-        stack: body.stack || [],
+        stack: Array.isArray(body.stack)
+          ? body.stack
+          : [],
 
         image: {
           src: body.image?.src || "",
+
           alt:
             body.image?.alt ||
             body.title.trim(),
         },
 
-        liveDemo: body.liveDemo || undefined,
-        github: body.github || undefined,
+        liveDemo: body.liveDemo || "",
 
-        featured: Boolean(body.featured),
-        status: body.status || "draft",
+        github: body.github || "",
+
+        featured: isFeatured,
+
+        status,
+
         order:
           typeof body.order === "number"
             ? body.order
             : 0,
       },
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     ).lean();
@@ -223,13 +258,53 @@ export async function PUT(
       );
     }
 
+    // --------------------------------------------------
+    // IMPORTANT:
+    //
+    // Only ONE project can be featured.
+    //
+    // If this project is featured,
+    // automatically remove featured from
+    // every other project.
+    // --------------------------------------------------
+
+    if (isFeatured) {
+      await Project.updateMany(
+        {
+          _id: {
+            $ne: id,
+          },
+          featured: true,
+        },
+        {
+          $set: {
+            featured: false,
+          },
+        }
+      );
+    }
+
+    // --------------------------------------------------
+    // RETURN UPDATED PROJECT
+    // --------------------------------------------------
+
+    const updatedProject =
+      await Project.findById(id).lean();
+
     return NextResponse.json({
       success: true,
-      message: "Project updated successfully",
-      project,
+
+      message: isFeatured
+        ? "Project updated and set as the featured project"
+        : "Project updated successfully",
+
+      project: updatedProject,
     });
   } catch (error) {
-    console.error("PUT project error:", error);
+    console.error(
+      "PUT project error:",
+      error
+    );
 
     return NextResponse.json(
       {
@@ -266,7 +341,8 @@ export async function DELETE(
 
     await connectToDatabase();
 
-    const project = await Project.findByIdAndDelete(id);
+    const project =
+      await Project.findByIdAndDelete(id);
 
     if (!project) {
       return NextResponse.json(
@@ -283,7 +359,10 @@ export async function DELETE(
       message: "Project deleted successfully",
     });
   } catch (error) {
-    console.error("DELETE project error:", error);
+    console.error(
+      "DELETE project error:",
+      error
+    );
 
     return NextResponse.json(
       {

@@ -4,20 +4,132 @@ import Link from "next/link";
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
 import TechLogo from "@/components/ui/tech-logo";
-import { portfolio } from "@/data/portfolio";
+
+import { connectToDatabase } from "@/lib/mongodb";
+import Project from "@/models/Project";
 
 type ProjectsSectionProps = {
   standalone?: boolean;
 };
 
-export default function ProjectsSection({
+type PublicProject = {
+  _id?: string;
+
+  slug: string;
+  title: string;
+  description: string;
+
+  impact?: string;
+
+  highlights: string[];
+
+  stack: string[];
+
+  image?: {
+    src?: string;
+    alt?: string;
+  };
+
+  liveDemo?: string;
+  github?: string;
+
+  featured?: boolean;
+  status?: "draft" | "published";
+  order?: number;
+};
+
+async function getPublicProjects(): Promise<PublicProject[]> {
+  try {
+    await connectToDatabase();
+
+    const projects = await Project.find({
+      status: "published",
+    })
+      .sort({
+        featured: -1,
+        order: 1,
+        createdAt: -1,
+      })
+      .lean();
+
+    return projects.map((project) => ({
+      _id: project._id?.toString(),
+
+      slug: project.slug,
+
+      title: project.title,
+
+      description: project.description || "",
+
+      impact: project.impact || "",
+
+      highlights: Array.isArray(project.highlights)
+        ? project.highlights
+        : [],
+
+      stack: Array.isArray(project.stack)
+        ? project.stack
+        : [],
+
+      image: {
+        src: project.image?.src || "",
+        alt:
+          project.image?.alt ||
+          project.title,
+      },
+
+      liveDemo: project.liveDemo || "",
+
+      github: project.github || "",
+
+      featured: Boolean(project.featured),
+
+      status:
+        project.status === "published"
+          ? "published"
+          : "draft",
+
+      order:
+        typeof project.order === "number"
+          ? project.order
+          : 0,
+    }));
+  } catch (error) {
+    console.error(
+      "Failed to load public projects:",
+      error
+    );
+
+    return [];
+  }
+}
+
+export default async function ProjectsSection({
   standalone = false,
 }: ProjectsSectionProps) {
-  const projects = portfolio.projects;
+  const projects = await getPublicProjects();
 
-  const featuredProject = projects[0];
+  /*
+   * IMPORTANT
+   *
+   * Featured project comes from MongoDB.
+   *
+   * The admin panel controls `featured`.
+   *
+   * We NEVER use projects[0] here.
+   */
 
-  const remainingProjects = projects.slice(1);
+  const featuredProject =
+    projects.find(
+      (project) => project.featured
+    ) || projects[0];
+
+  const remainingProjects = featuredProject
+    ? projects.filter(
+        (project) =>
+          project.slug !== featuredProject.slug
+      )
+    : [];
 
   return (
     <section
@@ -28,7 +140,7 @@ export default function ProjectsSection({
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-40 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-orange-500/[0.045] blur-[140px]"
+        className="pointer-events-none absolute left-1/2 top-40 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/[0.045] blur-[140px]"
       />
 
       <Container>
@@ -48,14 +160,16 @@ export default function ProjectsSection({
 
                 <h2 className="mt-5 max-w-4xl text-[clamp(3rem,7vw,7rem)] font-black leading-[0.85] tracking-[-0.06em] text-white">
                   PROJECTS
-                  <span className="text-orange-500">.</span>
+                  <span className="text-orange-500">
+                    .
+                  </span>
                 </h2>
               </div>
 
               <p className="max-w-md text-sm leading-7 text-white/40 lg:pb-2">
-                A selection of products and systems I&apos;ve
-                designed, built, deployed, and iterated in the
-                real world.
+                A selection of products and systems
+                I&apos;ve designed, built, deployed,
+                and iterated in the real world.
               </p>
             </div>
           </Reveal>
@@ -64,7 +178,9 @@ export default function ProjectsSection({
 
           {featuredProject && (
             <Reveal className="mt-12">
-              <FeaturedProject project={featuredProject} />
+              <FeaturedProject
+                project={featuredProject}
+              />
             </Reveal>
           )}
 
@@ -72,17 +188,19 @@ export default function ProjectsSection({
 
           {remainingProjects.length > 0 && (
             <div className="mt-5 grid gap-5 md:grid-cols-2">
-              {remainingProjects.map((project, index) => (
-                <Reveal
-                  key={project.slug}
-                  className={`[transition-delay:${index * 100}ms]`}
-                >
-                  <ProjectCard
-                    project={project}
-                    index={index + 2}
-                  />
-                </Reveal>
-              ))}
+              {remainingProjects.map(
+                (project, index) => (
+                  <Reveal
+                    key={project.slug}
+                    className={`[transition-delay:${index * 100}ms]`}
+                  >
+                    <ProjectCard
+                      project={project}
+                      index={index + 2}
+                    />
+                  </Reveal>
+                )
+              )}
             </div>
           )}
 
@@ -113,7 +231,7 @@ export default function ProjectsSection({
 function FeaturedProject({
   project,
 }: {
-  project: (typeof portfolio.projects)[number];
+  project: PublicProject;
 }) {
   return (
     <article className="group relative overflow-hidden rounded-[2rem] border border-white/[0.09] bg-[#101010]">
@@ -123,7 +241,10 @@ function FeaturedProject({
         {project.image?.src ? (
           <Image
             src={project.image.src}
-            alt={project.image.alt || project.title}
+            alt={
+              project.image.alt ||
+              project.title
+            }
             fill
             sizes="(max-width: 640px) 100vw, 90vw"
             className="object-cover object-top transition duration-700 ease-out group-hover:scale-[1.035]"
@@ -132,7 +253,7 @@ function FeaturedProject({
           <div className="absolute inset-0 bg-white/[0.03]" />
         )}
 
-        {/* Image overlays */}
+        {/* IMAGE OVERLAYS */}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
@@ -150,7 +271,7 @@ function FeaturedProject({
           01
         </div>
 
-        {/* CONTENT OVER IMAGE */}
+        {/* CONTENT */}
 
         <div className="absolute inset-x-5 bottom-5 sm:inset-x-7 sm:bottom-7 lg:max-w-2xl">
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-orange-400">
@@ -168,16 +289,21 @@ function FeaturedProject({
           {/* TECH */}
 
           <div className="mt-5 flex flex-wrap gap-2">
-            {project.stack.slice(0, 5).map((item) => (
-              <span
-                key={item}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/40 px-3 py-1.5 text-[11px] text-white/60 backdrop-blur-md"
-              >
-                <TechLogo name={item} compact />
+            {project.stack
+              .slice(0, 5)
+              .map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/40 px-3 py-1.5 text-[11px] text-white/60 backdrop-blur-md"
+                >
+                  <TechLogo
+                    name={item}
+                    compact
+                  />
 
-                {item}
-              </span>
-            ))}
+                  {item}
+                </span>
+              ))}
           </div>
         </div>
       </div>
@@ -186,14 +312,16 @@ function FeaturedProject({
 
       <div className="flex flex-col gap-4 border-t border-white/[0.07] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div className="flex flex-wrap gap-2">
-          {project.highlights.slice(0, 2).map((highlight) => (
-            <span
-              key={highlight}
-              className="rounded-lg bg-white/[0.035] px-3 py-2 text-xs text-white/40"
-            >
-              {highlight}
-            </span>
-          ))}
+          {project.highlights
+            .slice(0, 2)
+            .map((highlight) => (
+              <span
+                key={highlight}
+                className="rounded-lg bg-white/[0.035] px-3 py-2 text-xs text-white/40"
+              >
+                {highlight}
+              </span>
+            ))}
         </div>
 
         <div className="flex shrink-0 gap-2">
@@ -230,7 +358,7 @@ function ProjectCard({
   project,
   index,
 }: {
-  project: (typeof portfolio.projects)[number];
+  project: PublicProject;
   index: number;
 }) {
   return (
@@ -241,7 +369,10 @@ function ProjectCard({
         {project.image?.src ? (
           <Image
             src={project.image.src}
-            alt={project.image.alt || project.title}
+            alt={
+              project.image.alt ||
+              project.title
+            }
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-top transition duration-700 group-hover:scale-[1.04]"
@@ -285,16 +416,21 @@ function ProjectCard({
         {/* STACK */}
 
         <div className="mt-5 flex flex-wrap gap-2">
-          {project.stack.slice(0, 4).map((item) => (
-            <span
-              key={item}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.025] px-2.5 py-1.5 text-[11px] text-white/45"
-            >
-              <TechLogo name={item} compact />
+          {project.stack
+            .slice(0, 4)
+            .map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.025] px-2.5 py-1.5 text-[11px] text-white/45"
+              >
+                <TechLogo
+                  name={item}
+                  compact
+                />
 
-              {item}
-            </span>
-          ))}
+                {item}
+              </span>
+            ))}
         </div>
 
         {/* ACTIONS */}
